@@ -1,27 +1,18 @@
-import { Context, ContextManager, Hooks } from './hooks/entrypoint.js'
+import { useRenderCycle } from './hooks/engine.js'
+import { useState, useEffect } from './hooks/hooks.js'
 
-class CustomContext extends Context<{
-  rendered: boolean
-  'my-custom-event': string
-}> {
+const render = (message: string) => {
+  const [state, setState] = useState<string | undefined>(undefined)
 
-}
-
-const manager = new ContextManager<CustomContext>()
-const { useEffect, useState } = new Hooks(manager)
-
-const renderer = () => {
-  const [boolean, setBoolean] = useState(false)
-  
   useEffect(() => {
-    setTimeout(() => {
-      setBoolean(!boolean)
-    }, 1000)
-  }, [boolean])
+    if (message === 'hello') setState('world')
+  }, [message])
 
-  return boolean
+  return `${message} ${state}`
 }
 
-const context = new CustomContext()
-manager.createRenderCycleForContext(renderer, context)
-context.on('rendered', console.log)
+const events = useRenderCycle(render)
+events.on('render-complete', console.log)
+
+events.emit('request-render', ['goodbye'])
+setTimeout(() => events.emit('request-render', ['hello']), 1000)

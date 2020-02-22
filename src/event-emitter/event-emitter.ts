@@ -1,4 +1,6 @@
-export class EventEmitter <T extends { [channel: string]: unknown }> {
+export type Events = Record<string, unknown>
+
+export class EventEmitter <T extends Events> {
   private events = new Map<keyof T, Function[]>()
 
   on <C extends keyof T> (channel: C, listener: (data: T[C]) => void) {
@@ -9,7 +11,7 @@ export class EventEmitter <T extends { [channel: string]: unknown }> {
 
   off <C extends keyof T> (channel: C, listener: (data: T[C]) => void) {
     const listeners = this.events.get(channel)
-    const index = listeners?.indexOf(listener) || -1
+    const index = listeners?.indexOf(listener) ?? -1
     if (index !== -1) listeners?.splice(index, 1)
   }
 

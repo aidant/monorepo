@@ -9,8 +9,8 @@
     "discord.js": "github:discordjs/discord.js"
   },
   "devDependencies": {
-    "@types/node": "^12.12.14",
-    "nodemon": "^2.0.1",
-    "typescript": "^3.8.0-dev.20191125"
+    "@types/node": "^13.7.4",
+    "nodemon": "^2.0.2",
+    "typescript": "^3.9.0-dev.20200220"
   }
 }
