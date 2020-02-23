@@ -1,5 +1,4 @@
-import { Context } from './context.js'
-import { useHookState } from './utilities.js'
+import { useRef } from './use-ref'
 
 const dependenciesChanged = (previousDependencies: unknown[] | null, currentDependencies: unknown[]): boolean => {
   if (!previousDependencies) return true
@@ -17,21 +16,10 @@ const dependenciesChanged = (previousDependencies: unknown[] | null, currentDepe
   return false
 }
 
-export const useState = <T> (initial: T): [T, (updated: T) => void] => {
-  const context = Context.getCurrent()
-  const events = context.getEvents()
-  const [state, setHookState] = useHookState(initial)
-  const setState = (updater: T) => {
-    setHookState(updater)
-    events.emit('request-render', context.getProps())
-  }
-  return [state, setState]
-}
-
 export const useEffect = <D extends unknown[]> (effect: () => void, deps: D): void => {
-  const [prevDeps, setDeps] = useHookState<D | null>(null)
+  const ref = useRef<D | null>(null)
 
-  if (dependenciesChanged(prevDeps, deps)) queueMicrotask(() => effect())
+  if (dependenciesChanged(ref.current, deps)) queueMicrotask(() => effect())
 
-  setDeps(deps)
+  ref.current = deps
 }

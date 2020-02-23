@@ -3,7 +3,7 @@
   "scripts": {
     "start": "nodemon",
     "build": "tsc",
-    "development": "node --harmony --enable-source-maps lib/entrypoint.js"
+    "development": "node --harmony --enable-source-maps --experimental-specifier-resolution=node lib/entrypoint.js"
   },
   "dependencies": {
     "discord.js": "github:discordjs/discord.js"

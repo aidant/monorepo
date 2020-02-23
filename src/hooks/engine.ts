@@ -1,5 +1,5 @@
-import { Context } from './context.js'
-import { Events, EventEmitter } from '../event-emitter/event-emitter.js'
+import { Context } from './context'
+import { Events, EventEmitter } from '../event-emitter/event-emitter'
 
 type Renderer<Props extends unknown[], UI> = (...props: Props) => UI
 

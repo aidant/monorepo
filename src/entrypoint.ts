@@ -1,5 +1,5 @@
-import { useRenderCycle } from './hooks/engine.js'
-import { useState, useEffect } from './hooks/hooks.js'
+import { useRenderCycle } from './hooks/engine'
+import { useState, useEffect } from './hooks/hooks'
 
 const render = (message: string) => {
   const [state, setState] = useState<string | undefined>(undefined)

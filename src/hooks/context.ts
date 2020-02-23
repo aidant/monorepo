@@ -1,4 +1,4 @@
-import { EventEmitter, Events } from '../event-emitter/event-emitter.js'
+import { EventEmitter, Events } from '../event-emitter/event-emitter'
 
 interface State extends Record<string, unknown> {
   index: number
