@@ -16,22 +16,24 @@ export const useRenderCycle = <Props extends unknown[], UI> (
   const events = context.getEvents<RenderCycleEvents<Props, UI>>()
 
   const onRequestRender = (props: Props) => {
-    context.setProps(...props)
+    Context.setProps<Props>(context, ...props)
 
-    context.getState().index = 0
+    Context.setIndex(context, 0)
     Context.setCurrent(context)
     const ui = renderer(...props)
     Context.setCurrent(null)
     events.emit('render-complete', ui)
   }
 
-  const onDestroyRenderCycle = () => {
+  const onDestroyRenderCycleFirst = () => {
     events.off('request-render', onRequestRender)
-    events.off('destroy-render-cycle', onDestroyRenderCycle)
+    events.off('destroy-render-cycle', onDestroyRenderCycleFirst)
   }
 
   events.on('request-render', onRequestRender)
-  events.on('destroy-render-cycle', onDestroyRenderCycle)
+  events.on('destroy-render-cycle', onDestroyRenderCycleFirst)
 
   return events
 }
+
+export const useCurrentContext = () => Context.getCurrent()

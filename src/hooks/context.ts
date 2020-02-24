@@ -1,8 +1,8 @@
 import { EventEmitter, Events } from '../event-emitter/event-emitter'
 
-interface State extends Record<string, unknown> {
+interface Hooks extends Record<string, unknown> {
   index: number
-  hooks: unknown[]
+  state: unknown[]
 }
 
 export class Context {
@@ -18,12 +18,25 @@ export class Context {
     this.current = context
   }
 
-  private state: State = { index: 0, hooks: [] }
+  static setIndex (context: Context, index: number) {
+    context.hooks.index = index
+  }
+
+  static setProps <Props extends unknown[]> (context: Context, ...props: Props) {
+    context.props = props
+  }
+
+  private hooks: Hooks = { index: 0, state: [] }
   private events = new EventEmitter<Events>()
   private props: unknown[] = []
 
-  getState <S extends State> (): S {
-    return this.state as S
+  getState <S extends object> (initial: S): S {
+    const index = this.hooks.index++
+    const state: S = index in this.hooks.state
+      ? this.hooks.state[index] as S
+      : this.hooks.state[index] = initial
+
+    return state
   }
 
   getEvents <E extends Events> (): EventEmitter<E> {
@@ -32,9 +45,5 @@ export class Context {
 
   getProps <Props extends unknown[]> (): Props {
     return this.props as Props
-  }
-
-  setProps <Props extends unknown[]> (...props: Props) {
-    this.props = props
   }
 }

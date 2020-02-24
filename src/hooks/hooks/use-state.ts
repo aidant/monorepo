@@ -1,14 +1,17 @@
-import { Context } from '../context'
-import { useRef } from './use-ref'
+import { useCurrentContext } from '../engine'
+
+interface State<T> {
+  value: T
+}
 
 export const useState = <T> (initial: T): [T, (updated: T) => void] => {
-  const context = Context.getCurrent()
+  const context = useCurrentContext()
   const events = context.getEvents()
-  const ref = useRef(initial)
+  const state = context.getState<State<T>>({ value: initial })
 
   const setState = (updater: T) => {
-    ref.current = updater
-    events.emit('request-render', context.getProps())
+    state.value = updater
+    queueMicrotask(() => events.emit('request-render', context.getProps()))
   }
-  return [ref.current, setState]
+  return [state.value, setState]
 }

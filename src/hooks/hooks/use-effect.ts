@@ -1,4 +1,4 @@
-import { useRef } from './use-ref'
+import { useCurrentContext } from '../engine'
 
 const dependenciesChanged = (previousDependencies: unknown[] | null, currentDependencies: unknown[]): boolean => {
   if (!previousDependencies) return true
@@ -16,10 +16,41 @@ const dependenciesChanged = (previousDependencies: unknown[] | null, currentDepe
   return false
 }
 
-export const useEffect = <D extends unknown[]> (effect: () => void, deps: D): void => {
-  const ref = useRef<D | null>(null)
+type Cleanup = () => void
+type Effect = () => void | Cleanup
 
-  if (dependenciesChanged(ref.current, deps)) queueMicrotask(() => effect())
+interface State<D> {
+  dependencies: D | null
+  cleanup: null | Cleanup
+  registered: boolean
+}
 
-  ref.current = deps
+export const useEffect = <D extends unknown[]> (effect: Effect, deps: D): void => {
+  const context = useCurrentContext()
+  const events = context.getEvents()
+  const state = context.getState<State<D>>({
+    dependencies: null,
+    cleanup: null,
+    registered: false
+  })
+
+  if (!state.registered) {
+    state.registered = true
+
+    const onDestroyRenderCycle = () => {
+      events.off('destroy-render-cycle', onDestroyRenderCycle)
+      if (state.cleanup) state.cleanup()
+    }
+
+    events.on('destroy-render-cycle', onDestroyRenderCycle)
+  }
+
+  if (dependenciesChanged(state.dependencies, deps)) {
+    queueMicrotask(() => {
+      if (state.cleanup) state.cleanup()
+      state.cleanup = effect() || null
+    })
+  }
+
+  state.dependencies = deps
 }
