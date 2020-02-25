@@ -1,4 +1,4 @@
-import { useState, useEffect, useRenderCycle } from './hooks'
+import { useState, useEffect, useRenderCycle } from './src/hooks'
 
 const render = (message: string) => {
   const [state, setState] = useState('hello')

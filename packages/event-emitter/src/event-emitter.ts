@@ -18,11 +18,6 @@ export class EventEmitter <T extends Events> {
   emit <C extends keyof T> (channel: C, data: T[C]) {
     const listeners = this.events.get(channel)
     if (!listeners) return
-    /*
-      What is the best way to work around modifications to the array, if someone
-      calls events.off during a listener it will reduce the size of the array
-      and prevent the iterator from visiting every element.
-    */
     for (const listener of [...listeners]) listener(data)
   }
 }

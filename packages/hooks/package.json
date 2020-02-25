@@ -1,0 +1,11 @@
+{
+  "name": "@lazy/hooks",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@lazy/event-emitter": "*"
+  }
+}
