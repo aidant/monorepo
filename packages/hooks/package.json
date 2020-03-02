@@ -6,6 +6,15 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@lazy/event-emitter": "*"
+    "@lazy/event-emitter": "^0.0.0"
+  },
+  "main": "lib/index.js",
+  "exports": {
+    "use-context": "lib/use-context.js",
+    "use-effect": "lib/use-effect.js",
+    "use-reducer": "lib/use-reducer.js",
+    "use-ref": "lib/use-ref.js",
+    "use-state": "lib/use-state.js",
+    "core": "lib/core/index.js"
   }
 }

@@ -1,7 +1,7 @@
-import { useCurrentContext } from '../engine'
+import { useEvents, useMutable } from './core'
 
-const dependenciesChanged = (previousDependencies: unknown[] | null, currentDependencies: unknown[]): boolean => {
-  if (!previousDependencies) return true
+const dependenciesChanged = (previousDependencies: unknown[] | null, currentDependencies: unknown[] | undefined): boolean => {
+  if (!previousDependencies || !currentDependencies) return true
 
   if (previousDependencies.length !== currentDependencies.length) {
     throw new Error('Invalid call to useEffect, dependencies length changed since last render.')
@@ -25,10 +25,9 @@ interface State<D> {
   registered: boolean
 }
 
-export const useEffect = <D extends unknown[]> (effect: Effect, deps: D): void => {
-  const context = useCurrentContext()
-  const events = context.getEvents()
-  const state = context.getState<State<D>>({
+export const useEffect = <D extends unknown[]> (effect: Effect, deps?: D): void => {
+  const events = useEvents()
+  const state = useMutable<State<D>>('use-effect', {
     dependencies: null,
     cleanup: null,
     registered: false
@@ -38,11 +37,11 @@ export const useEffect = <D extends unknown[]> (effect: Effect, deps: D): void =
     state.registered = true
 
     const onDestroyRenderCycle = () => {
-      events.off('destroy-render-cycle', onDestroyRenderCycle)
+      events.off('destroyed', onDestroyRenderCycle)
       if (state.cleanup) state.cleanup()
     }
 
-    events.on('destroy-render-cycle', onDestroyRenderCycle)
+    events.on('destroyed', onDestroyRenderCycle)
   }
 
   if (dependenciesChanged(state.dependencies, deps)) {
@@ -52,5 +51,5 @@ export const useEffect = <D extends unknown[]> (effect: Effect, deps: D): void =
     })
   }
 
-  state.dependencies = deps
+  state.dependencies = deps || null
 }

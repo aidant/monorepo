@@ -2,12 +2,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-
+    "build": "lerna run build"
   },
   "devDependencies": {
-    "@types/node": "^13.7.4",
+    "@types/node": "^13.7.7",
     "lerna": "^3.20.2",
     "nodemon": "^2.0.2",
-    "typescript": "^3.9.0-dev.20200225"
+    "typescript": "^3.9.0-dev.20200229"
   }
 }
